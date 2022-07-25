@@ -3,7 +3,6 @@
 I've added the submodules of the hardare and sensors I will likely use in the future:
 - rp2040 sdk
 - freeRTOS
-- bme280 sensor
 
 To download the git submodules use:
 

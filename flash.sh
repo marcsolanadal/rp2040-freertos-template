@@ -1,3 +1,3 @@
 #! /bin/bash
 
-openocd -f interface/raspberrypi-swd.cfg -f target/rp2040.cfg -c "program build/blinky.elf verify reset exit"
+openocd -f interface/raspberrypi-swd.cfg -f target/rp2040.cfg -c "program build/src/firmware.elf verify reset exit"

@@ -12,6 +12,7 @@ add_library(freertos
     ${PICO_SDK_FREERTOS_SOURCE}/timers.c
     ${PICO_SDK_FREERTOS_SOURCE}/portable/MemMang/heap_3.c
     ${PICO_SDK_FREERTOS_SOURCE}/portable/GCC/ARM_CM0/port.c
+    FreeRTOS_Support_Files/IdleMemory.c
 )
 
 target_include_directories(freertos PUBLIC
