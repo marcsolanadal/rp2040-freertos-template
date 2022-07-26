@@ -18,7 +18,3 @@ pico_sdk_init()
 add_subdirectory(external/freertos)
 add_subdirectory(src)
 
-# Enable UART to allow SWD and disable USB
-pico_enable_stdio_uart(${PROJECT_NAME} 1)
-pico_enable_stdio_usb(${PROJECT_NAME} 0)
-

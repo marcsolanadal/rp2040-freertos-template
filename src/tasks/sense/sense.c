@@ -1,7 +1,10 @@
+#include <FreeRTOS.h>
 #include <stdio.h>
+#include <task.h>
 
 #include "hardware/i2c.h"
 #include "pico/stdlib.h"
+#include "sense.h"
 
 #define I2C_PORT i2c0
 
@@ -29,8 +32,12 @@ void i2c_configure(void) {
     gpio_pull_up(16);
 }
 
-int main() {
+void sense_task(void *pvParameters) {
     stdio_init_all();
     i2c_configure();
     bme280_init();
+
+    while (true) {
+        /* super-loop */
+    }
 }
