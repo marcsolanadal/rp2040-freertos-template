@@ -1,4 +1,5 @@
 #include <FreeRTOS.h>
+#include <queue.h>
 #include <stdio.h>
 #include <task.h>
 
@@ -32,10 +33,13 @@ void i2c_configure(void) {
     gpio_pull_up(16);
 }
 
-void sense_task(void *pvParameters) {
+void sense_task(void *message_queue) {
     stdio_init_all();
     i2c_configure();
     bme280_init();
+
+    // uint uIValueToSend = 42;
+    // xQueueSend(message_queue, &uIValueToSend, 0U);
 
     while (true) {
         /* super-loop */

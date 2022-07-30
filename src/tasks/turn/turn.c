@@ -1,47 +1,51 @@
 #include <FreeRTOS.h>
+#include <stdio.h>
 #include <task.h>
 
 #include "hardware/pwm.h"
 #include "pico/stdlib.h"
+#include "timers.h"
 #include "turn.h"
 
-/*
- * Based on the rp2040 datasheet (page 524).
- *
- * In a servo 1ms is -90 degrees and 2ms is 90 degrees.
- *      180 slices = 1ms
- *      360 slices = 2ms
- */
+const uint PWM_SIGNAL_PIN = 16;
+const uint TOP = 20000;
+const float DIV_INT = 125.f;
+const uint SERVO_MIN_RANGE_SLICE = 1000;
+const uint SERVO_MAX_RANGE_SLICE = 2000;
+const uint TIMER_PERIOD_MS = 10; // 14400
+
+TimerHandle_t period_timer = NULL;
+uint position = 1500;
+int direction = 1;
+
+void periodTimerCallback(TimerHandle_t xTimer) {
+    position += direction;
+    pwm_set_gpio_level(PWM_SIGNAL_PIN, position);
+
+    if (position <= SERVO_MIN_RANGE_SLICE ||
+        position >= SERVO_MAX_RANGE_SLICE) {
+        direction *= -1;
+    }
+}
+
 void turn_task(void *pvParameters) {
-    const uint PWM_SIGNAL_PIN = 15;
+    pwm_config cfg = pwm_get_default_config();
+    pwm_config_set_wrap(&cfg, TOP - 1);
+    pwm_config_set_clkdiv(&cfg, DIV_INT);
+    pwm_init(pwm_gpio_to_slice_num(PWM_SIGNAL_PIN), &cfg, true);
 
-    uint brightness_level = 0;
-    int direction = 1;
-
-    uint slices = 100;
-
-    // Tell GPIO15 that they're allocated to the PWM
     gpio_set_function(PWM_SIGNAL_PIN, GPIO_FUNC_PWM);
 
-    // Find out which PWM slice is connected to PIN 15
-    uint slice_num = pwm_gpio_to_slice_num(PWM_SIGNAL_PIN);
+    period_timer =
+        xTimerCreate("period timer", TIMER_PERIOD_MS / portTICK_PERIOD_MS,
+                     pdTRUE, (void *)0, periodTimerCallback);
 
-    // Set period do 3599 slices. We want to use slice 180 to 360.
-    pwm_set_wrap(slice_num, slices - 1);
-
-    pwm_set_chan_level(slice_num, PWM_CHAN_B, brightness_level);
-
-    // Starts PWM
-    pwm_set_enabled(slice_num, true);
+    if (period_timer == NULL) {
+        printf("Could not create duty timer");
+    } else {
+        xTimerStart(period_timer, portMAX_DELAY);
+    }
 
     while (true) { // super-loop
-        pwm_set_chan_level(slice_num, PWM_CHAN_B, brightness_level);
-        brightness_level += direction;
-
-        vTaskDelay(10);
-
-        if (brightness_level <= 0 || brightness_level >= slices) {
-            direction *= -1;
-        }
     }
 }

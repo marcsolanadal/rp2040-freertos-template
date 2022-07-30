@@ -1,6 +1,6 @@
 # RP2040 template using freeRTOS
 
-I've added the submodules of the hardare and sensors I will likely use in the future:
+I've added the submodules of the hardware and sensors I will likely use in the future:
 - rp2040 sdk
 - freeRTOS
 
@@ -18,7 +18,16 @@ $ cmake --build build
 $ ./flash.sh
 ```
 
-## We may need to initialize the submodules of the SDK
+## Implementation
+
+Ideally every task should rely on the actor pattern to be completely isolated from other tasks.
+
+A HSM (Hierarchical State Machine) should be used in every actor to further improve code quality. 
+Since the project is really simple it shouldn't be required to go as far as using HSMs. Nonetheless, using them would be a nice practice.
+
+## Problems
+
+### We may need to initialize the submodules of the SDK
 
 CMake Warning at extern/pico-sdk/src/rp2_common/tinyusb/CMakeLists.txt:10 (message):
   TinyUSB submodule has not been initialized; USB support will be unavailable
@@ -26,7 +35,7 @@ CMake Warning at extern/pico-sdk/src/rp2_common/tinyusb/CMakeLists.txt:10 (messa
   hint: try 'git submodule update --init' from your SDK directory
   (/home/corretjola/pico/c/rp2040-template/extern/pico-sdk).
 
-## IdleMemory.c
+### IdleMemory.c
 
 Not including the file results in the following error:
 
