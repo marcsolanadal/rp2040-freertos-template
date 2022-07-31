@@ -1,5 +1,6 @@
 add_executable(${PROJECT_NAME}
     main.c
+    includes/Servo/Servo.c
     tasks/turn/turn.c
     tasks/sense/sense.c
     tasks/env_control/env_control.c
