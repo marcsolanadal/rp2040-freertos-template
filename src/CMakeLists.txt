@@ -1,6 +1,7 @@
 add_executable(${PROJECT_NAME}
     main.c
     includes/Servo/Servo.c
+    includes/Flash/Flash.c
     tasks/turn/turn.c
     tasks/sense/sense.c
     tasks/env_control/env_control.c
@@ -11,6 +12,7 @@ target_link_libraries(${PROJECT_NAME}
     freertos
     hardware_pwm
     hardware_i2c
+    hardware_flash
 )
 
 # Create map/bin/hex/uf2 files
